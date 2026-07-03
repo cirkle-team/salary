@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salary Calculation</title>
+  <style>
+    :root {
+      --bg: #f4f7f9;
+      --panel: #ffffff;
+      --ink: #15202b;
+      --muted: #607080;
+      --line: #d8e1e8;
+      --brand: #0f766e;
+      --brand-dark: #115e59;
+      --accent: #f59e0b;
+      --soft: #eef8f6;
+      --danger: #b91c1c;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.1;
+      color: var(--brand-dark);
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .sheet {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 26px rgba(21, 32, 43, 0.07);
+      overflow: hidden;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .panel-title span {
+      font-size: 12px;
+      opacity: 0.9;
+      text-align: right;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 14px;
+      padding: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      font-size: 16px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input:focus {
+      border-color: var(--brand);
+      outline: 3px solid rgba(15, 118, 110, 0.16);
+    }
+
+    .results {
+      padding: 12px 16px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row strong {
+      font-size: 14px;
+    }
+
+    .value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      font-size: 17px;
+      text-align: right;
+    }
+
+    .highlight {
+      background: var(--soft);
+      border: 1px solid #b7dfd9;
+      border-radius: 8px;
+      padding: 13px 14px;
+      margin-top: 4px;
+    }
+
+    .highlight .value {
+      color: var(--brand-dark);
+      font-size: 24px;
+    }
+
+    .note {
+      padding: 12px 16px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      border-top: 1px solid var(--line);
+      background: #fbfcfd;
+    }
+
+    @media (max-width: 900px) {
+      header,
+      .sheet {
+        display: grid;
+      }
+
+      .sheet {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        margin-top: 14px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Salary Calculation</h1>
+        <p class="subtitle">HTML version of the calculations from Salary.xlsx.</p>
+      </div>
+    </header>
+
+    <section class="sheet" id="salary" aria-label="Salary calculator">
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Salary Inputs</h2>
+          <span>Matches Sheet1 formulas</span>
+        </div>
+        <div class="grid">
+          <label>Salary
+            <input id="salaryAmount" type="number" step="0.01" placeholder="50K">
+          </label>
+          <label>Total Working Day
+            <input id="workingDays" type="number" step="0.01" placeholder="22">
+          </label>
+          <label>Extra Day
+            <input id="extraDays" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Leave Day
+            <input id="leaveDays" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>No Hours
+            <input id="noHours" type="number" step="0.01" placeholder="0" readonly>
+          </label>
+          <label>Leave Hours
+            <input id="leaveHours" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Tax
+            <input id="taxAmountInput" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>TDS
+            <input id="tdsAmount" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Bonus
+            <input id="bonusAmount" type="number" step="0.01" placeholder="0">
+          </label>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-title">
+          <h2>Salary Results</h2>
+          <span>Live totals</span>
+        </div>
+        <div class="results">
+          <div class="row"><strong>Per Day Amount</strong><span class="value" id="perDayAmount"></span></div>
+          <div class="row"><strong>Salary Amount</strong><span class="value" id="salaryCalcAmount"></span></div>
+          <div class="row"><strong>Extra Amount</strong><span class="value" id="extraAmount"></span></div>
+          <div class="row"><strong>Leave Amount</strong><span class="value" id="leaveAmount"></span></div>
+          <div class="row"><strong>Per Hour Amount</strong><span class="value" id="perHourAmount"></span></div>
+          <div class="row"><strong>Leave Hours Amount</strong><span class="value" id="leaveHoursAmount"></span></div>
+          <div class="row"><strong>Total</strong><span class="value" id="grossTotal"></span></div>
+          <div class="row"><strong>Total After Tax</strong><span class="value" id="afterTax"></span></div>
+          <div class="row"><strong>Leave After Amount</strong><span class="value" id="afterLeave"></span></div>
+          <div class="row highlight"><strong>Total Salary With Bonus</strong><span class="value" id="finalSalary"></span></div>
+        </div>
+      </aside>
+    </section>
+
+  </main>
+
+  <script>
+    const fields = [
+      "salaryAmount",
+      "workingDays",
+      "extraDays",
+      "leaveDays",
+      "noHours",
+      "leaveHours",
+      "taxAmountInput",
+      "tdsAmount",
+      "bonusAmount",
+    ];
+
+    const n = (id) => Number(document.getElementById(id).value) || 0;
+    const set = (id, value) => {
+      document.getElementById(id).textContent = format(value);
+    };
+    const round = (value) => Math.round(value);
+    const format = (value) => {
+      const safeValue = Number.isFinite(value) ? value : 0;
+      return safeValue.toLocaleString("en-IN", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: Number.isInteger(safeValue) ? 0 : 2,
+      });
+    };
+
+    function calculateSalary() {
+      const salary = n("salaryAmount");
+      const workingDays = n("workingDays");
+      const extraDays = n("extraDays");
+      const leaveDays = n("leaveDays");
+      const leaveHours = n("leaveHours");
+      const tax = n("taxAmountInput");
+      const tds = n("tdsAmount");
+      const bonus = n("bonusAmount");
+
+      const calculatedNoHours = workingDays ? workingDays * 9 : 0;
+      document.getElementById("noHours").value = workingDays
+        ? Number.isInteger(calculatedNoHours)
+          ? String(calculatedNoHours)
+          : String(Number(calculatedNoHours.toFixed(2)))
+        : "";
+      const noHours = calculatedNoHours;
+      const perDay = workingDays ? round(salary / workingDays) : 0;
+      const salaryAmount = workingDays * perDay;
+      const extraAmount = extraDays * perDay;
+      const leaveAmount = perDay * leaveDays;
+      const perHour = noHours ? round(salary / noHours) : 0;
+      const leaveHoursAmount = round(leaveHours * perHour);
+      const total = salary + extraAmount;
+      const totalAfterTax = total - tax;
+      const leaveAfterAmount = totalAfterTax - leaveAmount;
+      const finalSalary = leaveAfterAmount + bonus + tds - leaveHoursAmount;
+
+      set("perDayAmount", perDay);
+      set("salaryCalcAmount", salaryAmount);
+      set("extraAmount", extraAmount);
+      set("leaveAmount", leaveAmount);
+      set("perHourAmount", perHour);
+      set("leaveHoursAmount", leaveHoursAmount);
+      set("grossTotal", total);
+      set("afterTax", totalAfterTax);
+      set("afterLeave", leaveAfterAmount);
+      set("finalSalary", finalSalary);
+    }
+
+    function recalculate() {
+      calculateSalary();
+    }
+
+    for (const id of fields) {
+      document.getElementById(id).addEventListener("input", recalculate);
+    }
+
+    recalculate();
+  </script>
+</body>
+</html>
