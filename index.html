@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salary Calculation</title>
+  <style>
+    :root {
+      --bg: #fff7ed;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e6edf5;
+      --brand: #2563eb;
+      --brand-dark: #1e3a8a;
+      --accent: #f97316;
+      --mint: #10b981;
+      --rose: #f43f5e;
+      --violet: #8b5cf6;
+      --soft: #ecfeff;
+      --gold: #fef3c7;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(249, 115, 22, 0.22), transparent 28%),
+        radial-gradient(circle at 88% 8%, rgba(37, 99, 235, 0.20), transparent 28%),
+        linear-gradient(135deg, #fff7ed 0%, #eff6ff 48%, #ecfeff 100%);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(1220px, calc(100% - 32px));
+      margin: 28px auto 40px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 22px;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 18px 48px rgba(30, 58, 138, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero-total {
+      display: grid;
+      gap: 4px;
+      min-width: 240px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #8b5cf6 55%, #f97316);
+      color: #fff;
+      box-shadow: 0 16px 34px rgba(37, 99, 235, 0.26);
+    }
+
+    .hero-total span {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.86;
+    }
+
+    .hero-total strong {
+      font-size: 30px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sheet {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(360px, 0.7fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      position: relative;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      border-radius: 18px;
+      box-shadow: 0 22px 60px rgba(30, 58, 138, 0.12);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.96), rgba(16, 185, 129, 0.92));
+      color: #ffffff;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .panel-title span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0.9;
+      text-align: right;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 18px;
+      padding: 20px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      min-height: 88px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      box-shadow: 0 10px 22px rgba(30, 58, 138, 0.06);
+    }
+
+    .salary-field {
+      grid-column: span 3;
+      min-height: 110px;
+      padding: 16px;
+      border: 0;
+      background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(135deg, #2563eb, #10b981, #f97316) border-box;
+      border: 2px solid transparent;
+      box-shadow: 0 18px 38px rgba(37, 99, 235, 0.16);
+      color: var(--brand-dark);
+      font-size: 15px;
+    }
+
+    .grid label:nth-child(2) {
+      grid-column: span 3;
+    }
+
+    .grid label:nth-child(n + 3) {
+      grid-column: span 2;
+    }
+
+    .salary-field input {
+      min-height: 54px;
+      border-radius: 16px;
+      padding: 10px 14px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #eff6ff, #ecfeff);
+      box-shadow: inset 0 0 0 1px #bfdbfe;
+    }
+
+    input {
+      width: 100%;
+      min-height: 40px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+      background: #eef6ff;
+      box-shadow: inset 0 0 0 1px #dbeafe;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+      font-weight: 700;
+      opacity: 1;
+    }
+
+    input:focus {
+      border-color: var(--brand);
+      outline: 4px solid rgba(37, 99, 235, 0.14);
+      background: #ffffff;
+    }
+
+    input[readonly] {
+      color: var(--brand-dark);
+      background: #ecfeff;
+      box-shadow: inset 0 0 0 1px #a5f3fc;
+    }
+
+    .results {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .row {
+      display: grid;
+      gap: 8px;
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 10px 22px rgba(30, 58, 138, 0.06);
+    }
+
+    .row strong {
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      font-size: 22px;
+      color: #0f172a;
+      text-align: left;
+    }
+
+    .highlight {
+      grid-column: 1 / -1;
+      min-height: 118px;
+      border: 0;
+      background: linear-gradient(135deg, #f97316, #f43f5e 52%, #8b5cf6);
+      color: #ffffff;
+      box-shadow: 0 18px 34px rgba(244, 63, 94, 0.22);
+    }
+
+    .highlight strong,
+    .highlight .value {
+      color: #ffffff;
+    }
+
+    .highlight .value {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .note {
+      padding: 12px 16px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      border-top: 1px solid var(--line);
+      background: #fbfcfd;
+    }
+
+    @media (max-width: 900px) {
+      header,
+      .sheet {
+        display: grid;
+      }
+
+      .sheet {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid label:nth-child(2) {
+        grid-column: span 2;
+      }
+
+      .grid label:nth-child(n + 3) {
+        grid-column: span 1;
+      }
+
+      .hero-total {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        margin-top: 14px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      header,
+      .grid,
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-title {
+        align-items: flex-start;
+        display: grid;
+      }
+
+      .highlight .value {
+        font-size: 30px;
+      }
+
+      .salary-field {
+        min-height: 108px;
+        padding: 14px;
+      }
+
+      .salary-field input {
+        min-height: 54px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Salary Calculation</h1>
+        <p class="subtitle">Fast salary calculator with live day, hour, leave, tax and bonus totals.</p>
+      </div>
+      <div class="hero-total">
+        <span>Take home salary</span>
+        <strong id="heroFinalSalary">0</strong>
+      </div>
+    </header>
+
+    <section class="sheet" id="salary" aria-label="Salary calculator">
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Salary Inputs</h2>
+          <span>Enter salary details</span>
+        </div>
+        <div class="grid">
+          <label class="salary-field">Salary
+            <input id="salaryAmount" type="number" step="0.01" placeholder="Monthly Salary">
+          </label>
+          <label>Total Working Day
+            <input id="workingDays" type="number" step="0.01" placeholder="Add Total Working Day">
+          </label>
+          <label>Extra Day
+            <input id="extraDays" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Leave Day
+            <input id="leaveDays" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>No Hours
+            <input id="noHours" type="number" step="0.01" placeholder="0" readonly>
+          </label>
+          <label>Leave Hours
+            <input id="leaveHours" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Tax
+            <input id="taxAmountInput" type="number" step="0.01" placeholder="0">
+          </label>
+          <label>Bonus
+            <input id="bonusAmount" type="number" step="0.01" placeholder="0">
+          </label>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-title">
+          <h2>Salary Results</h2>
+          <span>Auto updated</span>
+        </div>
+        <div class="results">
+          <div class="row"><strong>Per Day Amount</strong><span class="value" id="perDayAmount"></span></div>
+          <div class="row"><strong>Salary Amount</strong><span class="value" id="salaryCalcAmount"></span></div>
+          <div class="row"><strong>Extra Amount</strong><span class="value" id="extraAmount"></span></div>
+          <div class="row"><strong>Leave Amount</strong><span class="value" id="leaveAmount"></span></div>
+          <div class="row"><strong>Per Hour Amount</strong><span class="value" id="perHourAmount"></span></div>
+          <div class="row"><strong>Leave Hours Amount</strong><span class="value" id="leaveHoursAmount"></span></div>
+          <div class="row"><strong>Total</strong><span class="value" id="grossTotal"></span></div>
+          <div class="row"><strong>Total After Tax</strong><span class="value" id="afterTax"></span></div>
+          <div class="row"><strong>Leave After Amount</strong><span class="value" id="afterLeave"></span></div>
+          <div class="row highlight"><strong>Total Salary With Bonus</strong><span class="value" id="finalSalary"></span></div>
+        </div>
+      </aside>
+    </section>
+
+  </main>
+
+  <script>
+    const fields = [
+      "salaryAmount",
+      "workingDays",
+      "extraDays",
+      "leaveDays",
+      "noHours",
+      "leaveHours",
+      "taxAmountInput",
+      "bonusAmount",
+    ];
+
+    const n = (id) => Number(document.getElementById(id).value) || 0;
+    const set = (id, value) => {
+      document.getElementById(id).textContent = format(value);
+    };
+    const round = (value) => Math.round(value);
+    const format = (value) => {
+      const safeValue = Number.isFinite(value) ? value : 0;
+      return safeValue.toLocaleString("en-IN", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: Number.isInteger(safeValue) ? 0 : 2,
+      });
+    };
+
+    function calculateSalary() {
+      const salary = n("salaryAmount");
+      const workingDays = n("workingDays");
+      const extraDays = n("extraDays");
+      const leaveDays = n("leaveDays");
+      const leaveHours = n("leaveHours");
+      const tax = n("taxAmountInput");
+      const bonus = n("bonusAmount");
+
+      const calculatedNoHours = workingDays ? workingDays * 9 : 0;
+      document.getElementById("noHours").value = workingDays
+        ? Number.isInteger(calculatedNoHours)
+          ? String(calculatedNoHours)
+          : String(Number(calculatedNoHours.toFixed(2)))
+        : "";
+      const noHours = calculatedNoHours;
+      const perDay = workingDays ? round(salary / workingDays) : 0;
+      const salaryAmount = workingDays * perDay;
+      const extraAmount = extraDays * perDay;
+      const leaveAmount = perDay * leaveDays;
+      const perHour = noHours ? round(salary / noHours) : 0;
+      const leaveHoursAmount = round(leaveHours * perHour);
+      const total = salary + extraAmount;
+      const totalAfterTax = total - tax;
+      const leaveAfterAmount = totalAfterTax - leaveAmount;
+      const finalSalary = leaveAfterAmount + bonus - leaveHoursAmount;
+
+      set("perDayAmount", perDay);
+      set("salaryCalcAmount", salaryAmount);
+      set("extraAmount", extraAmount);
+      set("leaveAmount", leaveAmount);
+      set("perHourAmount", perHour);
+      set("leaveHoursAmount", leaveHoursAmount);
+      set("grossTotal", total);
+      set("afterTax", totalAfterTax);
+      set("afterLeave", leaveAfterAmount);
+      set("finalSalary", finalSalary);
+      set("heroFinalSalary", finalSalary);
+    }
+
+    function recalculate() {
+      calculateSalary();
+    }
+
+    for (const id of fields) {
+      document.getElementById(id).addEventListener("input", recalculate);
+    }
+
+    recalculate();
+  </script>
+</body>
+</html>
